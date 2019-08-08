@@ -37,7 +37,6 @@ describe('Persistent Node Chat Server', function() {
       json: { username: 'Valjean' }
     }, function () {
       // Post a message to the node chat server:
-      console.log('in specs 2');
       request({
         method: 'POST',
         uri: 'http://127.0.0.1:3000/classes/messages',

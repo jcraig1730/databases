@@ -12,7 +12,7 @@ CREATE TABLE messages (
   username int,
   text varchar(255),
   roomname varchar(20),
-  FOREIGN KEY (username) REFERENCES users (id)
+  FOREIGN KEY (username) REFERENCES users (id) ON DELETE cascade
   -- FOREIGN KEY (roomname) REFERENCES rooms (id)
 );
 
@@ -26,4 +26,3 @@ CREATE TABLE messages (
 /*  Execute this file from the command line by typing:
  *    mysql -u root < server/schema.sql
  *  to create the database and the tables.*/
-
