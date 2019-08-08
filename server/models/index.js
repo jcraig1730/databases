@@ -5,13 +5,13 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (callback) {
-      db.query('SELECT * FROM messages', (err, data) => {
-        if (err){
-          throw err;
+      db.query('select messages.id, messages.text, messages.roomname, users.username from messages INNER JOIN users where messages.username = users.id', (err, data) => {
+        if (data.length < 1) {
+          callback(null, [{username: 'test', roomname: 'lobby', text: 'this is a test post'}]);
         } else {
           callback(null, data);
         }
-      })
+      });
     }, // a function which produces all the messages
     post: (message) => {
       //INSERT INTO messages
@@ -19,19 +19,18 @@ module.exports = {
         //do all that
       //else
         //add user first
-      db.query(`SELECT id FROM users WHERE username = 'Valjean'`, (err, data) => {
-        console.log('is there an error', err);
-        if (err) {
+      db.query(`SELECT id FROM users WHERE username = ?`, [message.username], (err, data) => {
+        if (!data.length > 0) {
           //put user into database
           db.query('INSERT INTO users SET ?', {username: message.username}, (err) => {
             if (err) {
               throw err;
             } else {
-              db.query(`SELECT id FROM users WHERE username = ${message.username}`, (err, id) => {
+              db.query(`SELECT id FROM users WHERE username = ?`, [message.username], (err, id) => {
                 if (err) {
                   throw err;
                 } else {
-                  db.query(`INSERT INTO messages SET ?`, {username: id, text: message.message, roomname: message.roomname}, (err) => {
+                  db.query(`INSERT INTO messages SET ?`, {username: id, text: message.text, roomname: message.roomname}, (err) => {
                     if (err) {
                       throw err;
                     }
@@ -41,8 +40,7 @@ module.exports = {
             }
           });
         } else {
-          console.log('a', data)
-          db.query('INSERT INTO messages SET ?', {username: data[0].id, text: message.message, roomname: message.roomname}, (err) => {
+          db.query('INSERT INTO messages (username, text, roomname) VALUES (?, ?, ?)', [data[0].id, message.text, message.roomname], (err) => {
             if (err) {
               throw err;
             }
