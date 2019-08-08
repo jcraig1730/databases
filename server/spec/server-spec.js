@@ -70,23 +70,45 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = "";
-       var queryArgs = [];
-    // TODO - The exact query string and query args to use
-    // here depend on the schema you design, so I'll leave
-    // them up to you. */
-
-    dbConnection.query(queryString, queryArgs, function(err) {
-      if (err) { throw err; }
-
-      // Now query the Node chat server and see if it returns
-      // the message we just inserted:
-      request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
-        var messageLog = JSON.parse(body);
-        expect(messageLog[0].text).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
-        done();
+    dbConnection.query(`INSERT INTO users SET ?`, {username: 'howard'}, (err, data) => {
+      if (err){
+        throw err;
+      } else {
+        dbConnection.query(`SELECT id FROM users WHERE username = 'howard'`, (err, id) => {
+          if (err) {
+            throw err
+          } else {
+          var queryString = "INSERT INTO messages SET ?";
+          var queryArgs = {username: id[0].id, text: 'Men like you can never change!', roomname: 'main'};
+          dbConnection.query(queryString, queryArgs, function(err) {
+            if (err) {
+              throw err;
+            } else {
+              request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+                var messageLog = JSON.parse(body);
+                expect(messageLog[0].text).to.equal('Men like you can never change!');
+                expect(messageLog[0].roomname).to.equal('main');
+                done();
+              });
+            }
+          });
+        }
       });
-    });
+    }
   });
 });
+});
+
+//     // TODO - The exact query string and query args to use
+//     // here depend on the schema you design, so I'll leave
+//     // them up to you. */
+
+
+
+//       // Now query the Node chat server and see if it returns
+//       // the message we just inserted:
+
+//       });
+//     });
+//   });
+// });

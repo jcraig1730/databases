@@ -4,7 +4,15 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function () {}, // a function which produces all the messages
+    get: function (callback) {
+      db.query('SELECT * FROM messages', (err, data) => {
+        if (err){
+          throw err;
+        } else {
+          callback(null, data);
+        }
+      })
+    }, // a function which produces all the messages
     post: (message) => {
       //INSERT INTO messages
       db.query(`SELECT id FROM users WHERE username = ${message.username}`, (err, data) => {
@@ -22,7 +30,15 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {},
+    get: function (callback) {
+      db.query('SELECT username FROM users', (err, data) => {
+        if (err){
+          throw err;
+        } else {
+          callback(null, data);
+        }
+      });
+    },
     post: function (newUser) {
       //use db.query somewhere in here
       db.query('INSERT INTO users SET ?', {username: newUser.username}, (err, data) => {
