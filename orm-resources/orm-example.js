@@ -41,14 +41,14 @@ var Message = db.define('message', {
 
 Message.sync({force: false})
   .then(() => {
-    return User.findAll({where: {username: 'h&j'}});
+    return User.findAll({where: {username: 'bill'}});
   })
   .then(result => {
     return (result[0].dataValues.id);
   })
   .then((id) => {
     return Message.create({
-      text: 'h&j from orm',
+      text: 'bill says hi jason',
       roomname: 'sequalize room',
       username: id
     });

@@ -1,5 +1,4 @@
 var db = require('../db');
-
 //db is the connection object
 
 module.exports = {
